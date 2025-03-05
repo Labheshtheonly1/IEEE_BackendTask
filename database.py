@@ -4,7 +4,7 @@ class adder:
     def __init__(self, db_name="my_database.db"):
         self.data = sqlite3.connect(db_name)
         self.cursor = self.data.cursor()
-        self.create_table()  # Calling the method inside __init__
+        self.create_table()
 
     def create_table(self):  # Instance method
         self.cursor.execute('''
@@ -23,20 +23,23 @@ class adder:
                      (name,genre,seats))
         self.data.commit()
         print("Updated list is: \n")
-        self.cursor.execute("SELECT * FROM movies")
-        movies = self.cursor.fetchall()
-        for movie in movies:
-            print(movie)
+        self.printer()
+
 
     def remove(self,name):
         self.data.execute("DELETE FROM movies WHERE name= ?",(name,))
         self.data.commit()
         print("Updated list is: \n")
+        self.printer()
+
+    def update(self,domain,updated,movie):
+        self.data.execute(f"UPDATE movies SET {domain} = ? WHERE name = ?", (updated, movie))
+        self.data.commit()
+        print("Updated Value is: ")
+        self.printer()
+
+    def printer(self):
         self.cursor.execute("SELECT * FROM movies")
         movies = self.cursor.fetchall()
         for movie in movies:
             print(movie)
-
-
-
-
