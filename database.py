@@ -6,25 +6,36 @@ class adder:
         self.cursor = self.data.cursor()
         self.create_table()
 
-    def create_table(self):  # Instance method
+    def create_table(self):
         self.cursor.execute('''
         CREATE TABLE IF NOT EXISTS movies (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            genre TEXT,
-            tickets_available INTEGER
+            genre TEXT
         )
         ''')
+
+        self.cursor.execute('''
+        CREATE TABLE IF NOT EXISTS shows (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            movie_id INTEGER,
+            show_time TEXT NOT NULL,
+            tickets_available INTEGER,
+            FOREIGN KEY (movie_id) REFERENCES movies(id)
+        )
+        ''')
+
         self.data.commit()
 
+    def add(self, name, genre):
+        # Insert movie into movies table
+        self.cursor.execute("INSERT INTO movies (name, genre) VALUES (?, ?)", (name, genre))
+        movie_id = self.cursor.lastrowid  # Get the inserted movie's ID
 
-    def add(self,name,genre,seats):
-        self.data.execute("INSERT INTO movies (name , genre, tickets_available) Values(?, ?, ?)",
-                     (name,genre,seats))
+
         self.data.commit()
         print("Updated list is: \n")
         self.printer()
-
 
     def remove(self,name):
         self.data.execute("DELETE FROM movies WHERE name= ?",(name,))
