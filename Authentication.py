@@ -1,5 +1,9 @@
 import sqlite3
+import os
 from user_admin import Admin
+from Movies import Booking,Movie
+book=Booking()
+movie=Movie()
 admin=Admin()
 class UserInfo:
     def __init__(self):
@@ -13,6 +17,8 @@ class UserInfo:
         self.Cursor.execute('''
         CREATE TABLE IF NOT EXISTS user_info (
         EmailID TEXT,
+        First_name TEXT,
+        Last_name TEXT,
         Username TEXT NOT NULL,
         Password TEXT
         )
@@ -21,11 +27,14 @@ class UserInfo:
 
 
     def sign_up(self):
-        Email=input("Enter Your Email-ID")
+        Email=input("Enter Your Email-ID: ")
+        First_name=input("Enter your First Name: ")
+        Last_name=input("Enter your Last Name: ")
         Username=input("Set Your Username: ")
         Passwword=input("Set Your Password: ")
-        self.Data.execute("INSERT INTO user_info (EmailID, Username, Password) Values(?, ?, ?)"
-                          ,(Email,Username,Passwword))
+        self.Data.execute("INSERT INTO user_info (EmailID, First_name, Last_name, Username, Password) "
+                          "Values(?, ?, ?, ?, ?)"
+                          ,(Email, First_name, Last_name,Username,Passwword))
         self.Data.commit()
         self.Log_in()
 
@@ -52,6 +61,16 @@ class UserInfo:
                     if stored_password[0] == Pass_word:  # Compare passwords
                         print("Authentication successful!")
                         print("Loging in....")
+                        print("\033[H\033[J", end="")
+                        print(f"Welcome! {User_name}.\n1)Booking\n2)Cancel Ticket\n3)Exit")
+                        dec=input()
+                        if dec=="1":
+                            movie.screening()
+                            book.booking()
+                        elif dec=="2":
+                            book.cancel_ticket()
+                        elif dec=="3":
+                            pass
 
                     else:
                         if self.login_counter<3:
@@ -74,4 +93,3 @@ class UserInfo:
         else:
             print("Error Enter Valid Input")
             self.Authenticator()
-
