@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .dashboard-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome to Your Dashboard</h1>
+
+    <div class="dashboard-buttons">
+        <form action="{{ url_for('user.book_movie') }}">
+            <button type="submit">Book a Movie</button>
+        </form>
+
+        <form action="{{ url_for('user.cancel_movie') }}">
+            <button type="submit">Cancel Booking</button>
+        </form>
+
+        <form action="{{ url_for('user.view_bookings') }}">
+            <button type="submit">Check My Bookings</button>
+        </form>
+
+        <form action="{{ url_for('auth.index') }}" method="POST">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+
+</body>
+</html>

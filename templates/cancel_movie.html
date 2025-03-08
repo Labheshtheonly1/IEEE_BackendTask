@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancel Movie Booking</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        select, button {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+        }
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .btn-cancel:hover {
+            background-color: #c82333;
+        }
+        .back-link {
+            display: block;
+            margin-top: 15px;
+            font-size: 14px;
+            text-decoration: none;
+            color: #007bff;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Cancel Your Movie Booking 🎟️</h2>
+
+        <form action="{{ url_for('user.cancel_movie') }}" method="post">
+            <label for="movie_name" class="form-label">Select Movie:</label>
+            <select name="movie_name" id="movie_name" class="form-select" required>
+                <option value="">-- Choose a Movie --</option>
+                {% for movie in movies %}
+                    <option value="{{ movie }}">{{ movie }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="show_time" class="form-label">Select Showtime:</label>
+            <select name="show_time" id="show_time" class="form-select" required>
+                <option value="">-- Choose a Slot --</option>
+            </select>
+
+            <button type="submit" class="btn btn-cancel mt-3">❌ Cancel My Booking</button>
+        </form>
+
+        <a href="{{ url_for('user.dashboard') }}" class="back-link">⬅️ Back to Dashboard</a>
+    </div>
+
+    <script>
+        document.getElementById("movie_name").addEventListener("change", function() {
+            let movieName = this.value;
+            let showTimeDropdown = document.getElementById("show_time");
+            showTimeDropdown.innerHTML = "<option value=''>-- Choose a Slot --</option>";
+
+            if (movieName) {
+                fetch(`/get_show_times?movie_name=${movieName}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.show_times.forEach(showTime => {
+                        let option = document.createElement("option");
+                        option.value = showTime;
+                        option.textContent = showTime;
+                        showTimeDropdown.appendChild(option);
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

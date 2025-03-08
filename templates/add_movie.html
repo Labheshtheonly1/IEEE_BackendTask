@@ -1,0 +1,83 @@
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: red;">{{ message }}</p>
+        {% endfor %}
+        {% set _ = session.pop('_flashes', None) %}  <!-- Clears flashed messages -->
+    {% endif %}
+{% endwith %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Movie</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f5f9; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    .container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 400px; text-align: center; }
+    input[type="text"],
+    input[type="time"],
+    input[type="number"] { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; }
+    label { display: block; margin-top: 15px; font-weight: bold; color: #555; text-align: left; }
+    button { width: 100%; padding: 10px; background-color: #5cb85c; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 20px; }
+    button:hover { background-color: #4cae4c; }
+    .messages p { color: red; font-size: 14px; margin: 5px 0; }
+    .link { margin-top: 20px; }
+    .link a { color: #337ab7; text-decoration: none; }
+    .link a:hover { text-decoration: underline; }
+    .slot-group { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 4px; text-align: left; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Add Movie</h2>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="messages">
+          {% for msg in messages %}
+            <p>{{ msg }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    <form action="/admin/add_movie" method="POST">
+      <input type="text" name="movie_name" placeholder="Movie Name" required>
+      <input type="text" name="genre" placeholder="Genre" required>
+
+      <h3>Movie Slots</h3>
+      <div id="slots-container"></div>
+      <button type="button" id="add-slot-btn">Add Slot</button>
+      <button type="submit">Add Movie</button>
+    </form>
+    <div class="link">
+      <a href="/admin/home">Back to Home</a>
+    </div>
+  </div>
+  <script>
+    document.getElementById("add-slot-btn").addEventListener("click", function(){
+      var container = document.getElementById("slots-container");
+      var slotGroup = document.createElement("div");
+      slotGroup.className = "slot-group";
+
+      var timeLabel = document.createElement("label");
+      timeLabel.textContent = "Slot Time:";
+      slotGroup.appendChild(timeLabel);
+      var timeInput = document.createElement("input");
+      timeInput.type = "time";
+      timeInput.name = "slot_time[]";
+      slotGroup.appendChild(timeInput);
+
+      var ticketsLabel = document.createElement("label");
+      ticketsLabel.textContent = "Tickets Available:";
+      slotGroup.appendChild(ticketsLabel);
+      var ticketsInput = document.createElement("input");
+      ticketsInput.type = "number";
+      ticketsInput.name = "slot_tickets[]";
+      ticketsInput.min = "0";
+      slotGroup.appendChild(ticketsInput);
+
+      container.appendChild(slotGroup);
+    });
+  </script>
+</body>
+</html>
