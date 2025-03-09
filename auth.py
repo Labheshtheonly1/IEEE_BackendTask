@@ -11,23 +11,28 @@ def index():
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    username = request.form.get("username")
-    password = request.form.get("password")
+    data = request.get_json()  # Get JSON data from Postman
+
+    if not data or "username" not in data or "password" not in data:
+        return jsonify({"error": "Missing username or password"}), 400
+
+    username = data["username"]
+    password = data["password"]
 
     # Admin login check
     if username == "admin" and password == "password":
-        session['user'] = 'admin'  # Storing session data
-        return redirect(url_for('admin.home'))
+        session['user'] = 'admin'
+        return jsonify({"message": "Admin login successful!", "role": "admin"}), 200
 
     # Check user in database
     user = data.get_user(username, password)
 
     if user:
-        session['user'] = username  # Store user in session
-        return redirect(url_for('user.dashboard'))  # Redirect to user dashboard
+        session['user'] = username
+        return jsonify({"message": "Login successful!", "role": "user"}), 200
 
-    flash("Invalid credentials! Please try again.")
-    return redirect(url_for('auth.index'))
+    return jsonify({"error": "Invalid credentials! Please try again."}), 401
+
 
 @auth_bp.route('/logout')
 def logout():
